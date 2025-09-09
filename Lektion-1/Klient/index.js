@@ -1,5 +1,3 @@
-const form = document.querySelector(".input-form") // läs in formulär
-const submitBtn = document.querySelector("button[type='submit']") //läs in submit
 
 let inputName = form.elements.name.value //.trim() Läser in det som skrivs i namn input
 let inputMessage = form.elements.message.value //Läser in det som skrivs i message iput

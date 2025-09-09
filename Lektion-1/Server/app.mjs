@@ -18,9 +18,6 @@ const saveMessage = () => {
 app.post("/messages",(req,res) => {
   const {name, message} = req.body
 
- 
-  saveMessage(message)
-
   try { 
     const newMessage =  {
       name,
