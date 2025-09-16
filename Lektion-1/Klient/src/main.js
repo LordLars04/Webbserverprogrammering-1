@@ -1,8 +1,11 @@
+import axios from 'axios';
 const form = document.querySelector(".input-form");
 const submitBtn = document.querySelector("button[type='submit']");
 
 // Function to check input fields and toggle the submit button's state
-const checkInputs = () => {
+
+
+  const checkInputs = () => {
   let inputName = form.elements.name.value.trim();
   let inputMessage = form.elements.message.value.trim();
 
@@ -30,33 +33,26 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  const messageData = {
+    name: inputName,
+    message: inputMessage,
+  }
+
   try {
     // Send the form data to the server
-    const response = await fetch('https://3000-firebase-web-up1-1756207702057.cluster-pbm4nlfnrzakyryoooaq5fq3ps.cloudworkstations.dev/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ 
-        name: inputName, 
-        message: inputMessage 
-      })
-    });
+    const response = await axios.post('http://localhost:3000/messages', 
+     messageData
+    );
 
-    if (response.ok) {
+    if (response.status === 201) {
       alert("Meddelandet sparades!");
-      console.log("Message saved successfully");
       form.reset(); // Clear the form fields
       checkInputs(); // Re-disable the submit button
     } else {
-      alert("Ett fel uppstod!");
-      console.error("Failed to save message");
+      alert("Ett fel uppstod!"); 
     }
   } catch (error) {
     console.error("Error:", error);
     alert("Kunde inte skicka meddelandet");
   }
 });
-
-// Run the check once when the script loads to set the initial button state
-checkInputs();
