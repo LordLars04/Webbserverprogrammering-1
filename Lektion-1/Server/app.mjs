@@ -7,9 +7,14 @@ import { dirname } from "path" // Hjälper oss att få sökvägen till den aktue
 const __filename = fileURLToPath(import.meta.url) // Hjälper oss att få sökvägen till den aktuella fil
 const __dirname = dirname(__filename) // Hjälper oss att få sökvägen till den aktuella mappen
 
+const corsOptions = {
+  origin: "https://5500-firebase-web-up1-1756207702057.cluster-pbm4nlfnrzakyryoooaq5fq3ps.cloudworkstations.dev",
+  optionsSuccessStatus: 200
+}
+
 const app = express() // Skapa Express-applikationen
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 

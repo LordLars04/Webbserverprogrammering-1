@@ -6,8 +6,6 @@ const checkInputs = () => {
   let inputName = form.elements.name.value.trim();
   let inputMessage = form.elements.message.value.trim();
 
-  const backenUrl = "https://5500-firebase-web-up1-1756207702057.cluster-pbm4nlfnrzakyryoooaq5fq3ps.cloudworkstations.dev/Lektion-1/Klient/index.html"
-
   // Disable the button if either field is empty
   if (!inputName || !inputMessage) {
     submitBtn.disabled = true;
@@ -34,7 +32,7 @@ form.addEventListener("submit", async (e) => {
 
   try {
     // Send the form data to the server
-    const response = await fetch('http://localhost:3000/messages', {
+    const response = await fetch('https://3000-firebase-web-up1-1756207702057.cluster-pbm4nlfnrzakyryoooaq5fq3ps.cloudworkstations.dev/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
