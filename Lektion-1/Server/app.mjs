@@ -71,10 +71,12 @@ app.get("/messages",(req,res) => {
   console.log("Hämta meddelanden");
   try {
     const messages = getMessages()
-    console.log("Meddelanden: ", messages);
-    res.json(messages)
-  } catch (error) {
-    
+    console.log("Meddelanden: ", messages)
+    res.status(200).json({success: true,  data: messages});
+  } 
+  catch (error) {
+    console.log("Fel vid hämtning av meddelanden:", error);
+    res.status(500).json({success: false});
   }
 });
-export default app
+export default app;
