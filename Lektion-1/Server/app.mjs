@@ -3,6 +3,7 @@ import cors from "cors" // Tilllåter förfrågningar från andra domäner (cros
 import fs from "fs" // Node.js filsystem modul för att läsa och skriva filer
 import { fileURLToPath } from "url" // Hjälper osss att få sökvägen till den aktuella fil
 import { dirname } from "path" // Hjälper oss att få sökvägen till den aktuella mappen
+import {v4 as uuidv4} from "uuid"; // Används för att generera unika ID:n
 
 const __filename = fileURLToPath(import.meta.url) // Hjälper oss att få sökvägen till den aktuella fil
 const __dirname = dirname(__filename) // Hjälper oss att få sökvägen till den aktuella mappen
@@ -50,11 +51,14 @@ const getMessages = () => {
 app.post("/messages",(req,res) => {
   const {name, message} = req.body
 
+  const id = uuidv4();
+  
   try { 
     const messageData =  {
       name,
       message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      id, 
     }
 
     saveMessage(messageData)
@@ -71,7 +75,7 @@ app.get("/messages",(req,res) => {
   console.log("Hämta meddelanden");
   try {
     const messages = getMessages()
-    console.log("Meddelanden: ", messages)
+    console.log("Meddelanden: ", messages);
     res.status(200).json({success: true,  data: messages});
   } 
   catch (error) {
