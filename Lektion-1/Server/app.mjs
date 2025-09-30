@@ -60,7 +60,11 @@ const deleteMessage = (messageId) => {
    // Filtera bort mneddelandet med matchande ID
    // filter() skapar en ny array som INTE innehåller meddelandet vi vill radera
    const filteredMessages = messages.filter(msg => msg.id !== messageId);
-   
+   // KOlla om något meddelande togs bort
+   if (messages.length === filteredMessages.length) {
+    return false; // Ingen meddelande togs bort, returnera false
+   }
+
   } catch (error) {
     
   }
