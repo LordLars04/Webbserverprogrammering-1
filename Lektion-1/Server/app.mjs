@@ -14,13 +14,14 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-const saveMessage = (messageData) => { // The function now accepts an argument, 'messageData'.
-  const filePath = `${__dirname}/messages.json` // Skapa fullständign sökväg till JSON-filen
+ const filePath = `${__dirname}/messages.json`; // Skapa fullständign sökväg till JSON-filen
+ const data = fs.readFileSync(filePath, "utf-8"); //läs fil som text
 
+const saveMessage = (messageData) => { // The function now accepts an argument, 'messageData'.
+ 
   let messages = []
   if (fs.existsSync(filePath)) { // Kontrollera om filen finns 
-    const data = fs.readFileSync(filePath, "utf-8") //läs fil som text
-    messages = JSON.parse(data) // Konvertera JSON - filen till ett JavaScript-objekt
+   messages = JSON.parse(data) // Konvertera JSON - filen till ett JavaScript-objekt
   }
 
   messages.push(messageData) // This now works because messageData is passed into the function.
@@ -34,11 +35,11 @@ const saveMessage = (messageData) => { // The function now accepts an argument, 
 }
 
 const getMessages = () => {
-  const filePath=`${__dirname}/messages.json`
+ 
 
   try {
     if (fs.existsSync(filePath)){
-      const data = fs.readFileSync(filePath,"utf-8")
+
       return JSON.parse(data)
     }
     return []
@@ -47,6 +48,23 @@ const getMessages = () => {
     return []
   }
 };
+
+const deleteMessage = (messageId) => {
+  try {
+    if(!fs.existsSync(filePath)) {
+      return false; // Returnera false om filen inte finns
+    }
+
+   let messages = JSON.parse(data); // Konvertera JSON-filen till ett JavaScript array
+
+   // Filtera bort mneddelandet med matchande ID
+   // filter() skapar en ny array som INTE innehåller meddelandet vi vill radera
+   const filteredMessages = messages.filter(msg => msg.id !== messageId);
+   
+  } catch (error) {
+    
+  }
+}
 
 app.post("/messages",(req,res) => {
   const {name, message} = req.body
@@ -83,4 +101,23 @@ app.get("/messages",(req,res) => {
     res.status(500).json({success: false});
   }
 });
+
+app.delete("/messages/:id", (req, res) =>{
+  const messageId = req.params.id;
+
+  console.log({ID: messageId});
+  try {
+    const deleted = deleteMessage(messageId);
+    
+    if (deleted) {
+      res.status(200).json({success: true,});
+    }
+    else {
+      res.status(404).json({success: false});
+    }
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({success: false});
+  }
+})
 export default app;
