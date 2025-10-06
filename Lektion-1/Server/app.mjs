@@ -60,13 +60,18 @@ const deleteMessage = (messageId) => {
    // Filtera bort mneddelandet med matchande ID
    // filter() skapar en ny array som INTE innehåller meddelandet vi vill radera
    const filteredMessages = messages.filter(msg => msg.id !== messageId);
+
    // KOlla om något meddelande togs bort
    if (messages.length === filteredMessages.length) {
     return false; // Ingen meddelande togs bort, returnera false
    }
 
+   // Spara den uppdaterade arrayen (utan det raderade meddelandert) 
+    fs.writeFileSync(filePath, JSON.stringify(filteredMessages, null, 2));
+    return true;
   } catch (error) {
-    
+    console.log(" Fel vid radering:", error);
+    return false;
   }
 }
 
@@ -94,10 +99,10 @@ app.post("/messages",(req,res) => {
 })
 
 app.get("/messages",(req,res) => {
-  console.log("Hämta meddelanden");
+
   try {
     const messages = getMessages()
-    console.log("Meddelanden: ", messages);
+   
     res.status(200).json({success: true,  data: messages});
   } 
   catch (error) {
@@ -107,6 +112,7 @@ app.get("/messages",(req,res) => {
 });
 
 app.delete("/messages/:id", (req, res) =>{
+  console.log(" raderar meddelande");
   const messageId = req.params.id;
 
   console.log({ID: messageId});

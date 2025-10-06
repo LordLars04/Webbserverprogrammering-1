@@ -39,10 +39,14 @@ console.log({messages: messages});
       <span class="timestamp">${date}</span>
     </div>
     <p class="message-content">${msg.message}</p>
+    <button class="delete-btn" data-id="${msg.id}">Radera</button>
     `;
 
     messagesContainer.appendChild(messageDiv);
   })
+
+  // Efter att alla medelanden har lagts till, lägg till event Listeners på radera knapparna
+  addDeleteEventListeners();
 };
 
 // Add an event listener to check inputs whenever the user types
@@ -85,7 +89,10 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-window.addEventListener("load", async (e) => {
+window.addEventListener("load", async (e) =>loadMessages());
+
+ const loadMessages = async () => {
+  
   try {
     const response = await axios.get("http://localhost:3000/messages");
 
@@ -94,4 +101,42 @@ window.addEventListener("load", async (e) => {
     displayMessages(response.data.data);
   } catch (error) { }
 
-}); // Initial check on page load
+}; // Initial check on page load
+
+
+const addDeleteEventListeners = () => {
+  // Hitta alla knappar med klassen "delete-btn"
+  const deleteButtons= document.querySelectorAll(".delete-btn");
+
+  // Läg till en klick-lyssnare på varje knapp
+  deleteButtons.forEach(btn => {
+    btn.addEventListener("click", handleDelete);
+  })
+};
+
+const handleDelete = async (e) => {
+  const messageId = e.target.dataset.id;
+  console.log({messageId: messageId});
+  try {
+    // Skicka DELETE-requerst till servern
+    // Vi lägger till ID:t i URL:en
+    const response = await axios.delete(`http://localhost:3000/messages/${messageId}`);
+
+    if (response.data.success) {
+      alert("Meddelandet raderades!");
+
+      // Ladda om alla meddelanden för att visa uppdaterad lista
+      await loadMessages();
+    } else {
+      alert("Kunde inte radera meddelandet");
+    }
+  } catch (error) {
+    console.log("Fel vid radering:", error);
+
+    if (error.response && error.response.status === 404) {
+      alert(" Meddelandet hittades inte");
+    } else {
+      alert("Kunde inte radera meddelandet");
+    }
+  }
+}
