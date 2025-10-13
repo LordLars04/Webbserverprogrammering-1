@@ -73,6 +73,41 @@ const deleteMessage = (messageId) => {
     console.log(" Fel vid radering:", error);
     return false;
   }
+};
+
+// Lägg till funktion för att updatera ett message objekt
+const updateMessage = (messageId, updatera) => {
+  try {
+    // Kontrollera om filen finns
+    if (!fs.existsSync(filePath)) {
+      return false;
+    }
+
+    // Hömta meddelanden från messages.json
+    const currentData = fs.readFileSync(filePath, 'utf-8');
+    let messages = JSON.parse(currentData); // Omvandla datan i curentData till en JS-array
+
+    // Hämta index för meddelandet som ska uppdateras
+    const messageIndesx = messages.findIndex(msg => msg.id == messageId);
+
+    if (messageIndex == -1) {
+      return false;
+    }
+
+    // Uppdatera endast de fält som skickas in, behåll resten
+    messages[messageIndex] = {
+      ...messages[messageIndex],
+      ...updates, 
+      id: messageId,
+      updatedAt: new Date().toISOString(),
+    };
+
+    fs.writeFileSync(filePath, JSON.stringify(messages, null, 2));
+    return true;
+  } catch (error) {
+    console.log("Fel vid uppdatering:", error);
+    return false;    
+  }
 }
 
 app.post("/messages",(req,res) => {
@@ -129,5 +164,35 @@ app.delete("/messages/:id", (req, res) =>{
     console.log("Error:", error);
     res.status(500).json({success: false});
   }
-})
+});
+
+app.patch("/messages/:id", (req, res) => {
+  //Läs ut id och meddelande och spara i två variabeler
+  const messageId = req.params.id;
+  const updates = req.body;
+
+  console.log("Uppdatera meddelande:", messageId, updates);
+
+  try {
+    // Anropar updateMessage och sparar svaret i en variabel
+    const result = updateMessage(messageId, updates);
+
+    if (result === true) {
+      res.status(201).json({
+        success:true,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+      })
+    }
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).json({
+      success:false,
+      error: "Serverfel",
+      
+    })
+  }
+});
 export default app;

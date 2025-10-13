@@ -115,6 +115,54 @@ const addDeleteEventListeners = () => {
   })
 };
 
+const addUpdateEventListeners = () => {
+  const updateButtons = document.querySelectorAll(".update-btn");
+
+  updateButtons.forEach((btn) => {
+    btn.addEventListener("click", handleUpdate);
+  });
+};
+
+const handleUpdate = async (e) => {
+  const messageId = e.target.dataset.id;
+  const messageDiv = e.target.closest(".message");
+
+  // Hämta nuvarande värden
+  const curentName = messageDiv.querySelector(".message-header strong").textContent;
+  const curentMessage = messageDiv.querySelector(".message-content").textContent;
+
+  // Skapa ett enkelt fromulär för redigering
+  const newName = prompt("Ändra namn:", curentName);
+  if (newName === null) return; // Användaren avbröt
+
+  const newMessage = prompt("Ändra meddeelande:", curentMessage);
+  if (newMessage === null) return; // Användaren avbröt
+
+  try {
+    const uppdates = {};
+
+    if (newName !== curentName) updates.name = newName;
+    if (newMessage !== curentMessage) updates.message = newMessage;
+
+    // Om inget ändrats, avbryt
+    if (Object.keys(updates).length === 0) {
+      alert("Inga ändringar gjordes");
+      return;
+    }
+
+    const response = await axios.patch(`http://localhost:3000/messages/${messageId}`, uppdates);
+
+    if (response.data.success=== true) {
+      alert("Meddelandet har uppdaterats!");
+      await loadMessages();
+    } else {
+      alert("Kunde inte uppdatera meddelandet");
+    }
+  } catch (error) {
+      alert("Kunde inte uppdatera meddelandet");
+  }
+};
+
 const handleDelete = async (e) => {
   const messageId = e.target.dataset.id;
   console.log({messageId: messageId});
